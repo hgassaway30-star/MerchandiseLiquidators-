@@ -1,19 +1,21 @@
-import { createClient, RedisClientType } from 'redis';
+import { createClient } from 'redis';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 class RedisClient {
-  private static instance: RedisClient;
-  private client: RedisClientType;
-  private isConnected: boolean = false;
+  constructor() {
+    if (RedisClient.instance) {
+      return RedisClient.instance;
+    }
 
-  private constructor() {
     this.client = createClient({
       url: REDIS_URL,
       socket: {
         reconnectStrategy: (retries) => Math.min(retries * 50, 1000),
       },
     });
+
+    this.isConnected = false;
 
     this.client.on('error', (err) => {
       console.error('Redis Client Error:', err);
@@ -29,33 +31,35 @@ class RedisClient {
       console.log('❌ Disconnected from Redis');
       this.isConnected = false;
     });
+
+    RedisClient.instance = this;
   }
 
-  public static getInstance(): RedisClient {
+  static getInstance() {
     if (!RedisClient.instance) {
       RedisClient.instance = new RedisClient();
     }
     return RedisClient.instance;
   }
 
-  public async connect(): Promise<void> {
+  async connect() {
     if (!this.isConnected) {
       await this.client.connect();
     }
   }
 
-  public async disconnect(): Promise<void> {
+  async disconnect() {
     if (this.isConnected) {
       await this.client.disconnect();
     }
   }
 
-  public getClient(): RedisClientType {
+  getClient() {
     return this.client;
   }
 
   // Cache utilities
-  public async set(key: string, value: any, expireInSeconds?: number): Promise<void> {
+  async set(key, value, expireInSeconds) {
     await this.connect();
     const serializedValue = JSON.stringify(value);
     if (expireInSeconds) {
@@ -65,45 +69,45 @@ class RedisClient {
     }
   }
 
-  public async get<T>(key: string): Promise<T | null> {
+  async get(key) {
     await this.connect();
     const value = await this.client.get(key);
     return value ? JSON.parse(value) : null;
   }
 
-  public async del(key: string): Promise<void> {
+  async del(key) {
     await this.connect();
     await this.client.del(key);
   }
 
-  public async exists(key: string): Promise<boolean> {
+  async exists(key) {
     await this.connect();
     return (await this.client.exists(key)) === 1;
   }
 
   // Session management
-  public async setSession(sessionId: string, data: any, expireInSeconds: number = 3600): Promise<void> {
+  async setSession(sessionId, data, expireInSeconds = 3600) {
     await this.set(`session:${sessionId}`, data, expireInSeconds);
   }
 
-  public async getSession<T>(sessionId: string): Promise<T | null> {
-    return await this.get<T>(`session:${sessionId}`);
+  async getSession(sessionId) {
+    return await this.get(`session:${sessionId}`);
   }
 
-  public async deleteSession(sessionId: string): Promise<void> {
+  async deleteSession(sessionId) {
     await this.del(`session:${sessionId}`);
   }
 
   // Cart management
-  public async setCart(userId: string, cart: any, expireInSeconds: number = 86400): Promise<void> {
+  async setCart(userId, cart, expireInSeconds = 86400) {
     await this.set(`cart:${userId}`, cart, expireInSeconds);
   }
 
-  public async getCart<T>(userId: string): Promise<T | null> {
-    return await this.get<T>(`cart:${userId}`);
+  async getCart(userId) {
+    return await this.get(`cart:${userId}`);
   }
 
-  public async deleteCart(userId: string): Promise<void> {
+  async deleteCart(userId) {
     await this.del(`cart:${userId}`);
   }
 }

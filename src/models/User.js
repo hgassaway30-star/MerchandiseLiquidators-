@@ -1,8 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { IUser, IAddress } from '@/types';
 
-const AddressSchema = new Schema<IAddress>({
+const AddressSchema = new Schema({
   type: {
     type: String,
     enum: ['shipping', 'billing'],
@@ -62,7 +61,7 @@ const AddressSchema = new Schema<IAddress>({
   },
 });
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -115,12 +114,12 @@ UserSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
-    next(error as Error);
+    next(error);
   }
 });
 
 // Compare password method
-UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
@@ -136,4 +135,4 @@ UserSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
-export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+export default mongoose.models.User || mongoose.model('User', UserSchema);

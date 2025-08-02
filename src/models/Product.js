@@ -1,7 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
-import { IProduct, IProductImage, IProductVariant } from '@/types';
 
-const ProductImageSchema = new Schema<IProductImage>({
+const ProductImageSchema = new Schema({
   url: {
     type: String,
     required: true,
@@ -16,7 +15,7 @@ const ProductImageSchema = new Schema<IProductImage>({
   },
 });
 
-const ProductVariantSchema = new Schema<IProductVariant>({
+const ProductVariantSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -40,7 +39,7 @@ const ProductVariantSchema = new Schema<IProductVariant>({
   },
 });
 
-const ProductSchema = new Schema<IProduct>({
+const ProductSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -198,4 +197,4 @@ ProductSchema.pre('save', function (next) {
   next();
 });
 
-export default mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);
+export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
