@@ -202,6 +202,11 @@ ProductSchema.virtual('mainImage').get(function () {
 
 // Pre-save middleware to update SEO fields if not provided
 ProductSchema.pre('save', function (next) {
+  // Initialize seo object if it doesn't exist
+  if (!this.seo) {
+    this.seo = {};
+  }
+  
   if (!this.seo.title) {
     this.seo.title = this.name.substring(0, 60);
   }

@@ -1,7 +1,7 @@
 import connectDB from '../../../../lib/mongodb.js';
 import Product from '../../../../models/Product.js';
 import Category from '../../../../models/Category.js';
-import { authenticateToken, requireAdmin } from '../../../../lib/auth.js';
+import { authenticateRequest, requireAdminAccess } from '../../../../lib/auth.js';
 import { uploadMultipleImages, deleteMultipleImages } from '../../../../lib/cloudinary.js';
 import multer from 'multer';
 import { promisify } from 'util';
@@ -34,27 +34,9 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    // Apply authentication middleware
-    await new Promise((resolve, reject) => {
-      authenticateToken(req, res, (result) => {
-        if (result instanceof Error) {
-          reject(result);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-
-    // Apply admin middleware
-    await new Promise((resolve, reject) => {
-      requireAdmin(req, res, (result) => {
-        if (result instanceof Error) {
-          reject(result);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    // Authenticate and authorize
+    const user = await authenticateRequest(req);
+    requireAdminAccess(user);
 
     if (req.method === 'GET') {
       return await getProducts(req, res);
@@ -68,6 +50,21 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Products API error:', error);
+    
+    if (error.message === 'Access token required') {
+      return res.status(401).json({
+        success: false,
+        message: 'Access token required',
+      });
+    }
+    
+    if (error.message === 'Admin access required' || error.message === 'Invalid access token') {
+      return res.status(403).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -221,14 +218,14 @@ async function createProduct(req, res) {
       trackQuantity: trackQuantity === 'true',
       quantity: trackQuantity === 'true' ? parseInt(quantity) || 0 : 0,
       weight: weight ? parseFloat(weight) : undefined,
-      dimensions: dimensions ? JSON.parse(dimensions) : undefined,
+      dimensions: dimensions ? (typeof dimensions === 'string' ? JSON.parse(dimensions) : dimensions) : undefined,
       category,
       subcategory,
-      tags: tags ? JSON.parse(tags) : [],
+      tags: tags ? (typeof tags === 'string' ? JSON.parse(tags) : tags) : [],
       images,
       status: status || 'draft',
       featured: featured === 'true',
-      seo: seo ? JSON.parse(seo) : {},
+      seo: seo ? (typeof seo === 'string' ? JSON.parse(seo) : seo) : {},
     });
 
     await product.save();
