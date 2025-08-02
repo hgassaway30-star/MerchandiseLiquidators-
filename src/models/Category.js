@@ -1,7 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
-import { ICategory } from '@/types';
 
-const CategorySchema = new Schema<ICategory>({
+const CategorySchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -90,4 +89,4 @@ CategorySchema.virtual('fullPath').get(function () {
   return this.name;
 });
 
-export default mongoose.models.Category || mongoose.model<ICategory>('Category', CategorySchema);
+export default mongoose.models.Category || mongoose.model('Category', CategorySchema);
