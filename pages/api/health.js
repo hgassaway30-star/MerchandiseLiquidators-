@@ -1,5 +1,5 @@
-import connectDB from '../../lib/mongodb.js';
-import { redis } from '../../lib/redis.js';
+import connectDB from '../../lib/mongodb';
+import { redis } from '../../lib/redis';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

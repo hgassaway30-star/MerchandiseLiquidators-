@@ -1,6 +1,6 @@
-import { verifyRefreshToken, generateTokenPair, getStoredRefreshToken, storeRefreshToken } from '../../../lib/auth.js';
-import connectDB from '../../../lib/mongodb.js';
-import User from '../../../models/User.js';
+import { verifyRefreshToken, generateTokenPair, getStoredRefreshToken, storeRefreshToken } from '../../../lib/auth';
+import connectDB from '../../../lib/mongodb';
+import User from '../../../models/User';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
