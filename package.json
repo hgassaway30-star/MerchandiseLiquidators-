@@ -17,6 +17,8 @@
     "stripe": "^14.10.0",
     "jsonwebtoken": "^9.0.2",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.0",
+    "multer": "^1.4.5-lts.1",
     "tailwindcss": "^3.3.6",
     "postcss": "^8.4.32",
     "autoprefixer": "^10.4.16",
@@ -36,6 +38,7 @@
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-toast": "^1.1.5",
+    "react-dropzone": "^14.2.3",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4"
   },

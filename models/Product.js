@@ -5,6 +5,10 @@ const ProductImageSchema = new Schema({
     type: String,
     required: true,
   },
+  public_id: {
+    type: String,
+    required: true,
+  },
   alt: {
     type: String,
     required: true,
@@ -35,7 +39,8 @@ const ProductVariantSchema = new Schema({
     default: 0,
   },
   image: {
-    type: String,
+    url: String,
+    public_id: String,
   },
 });
 
@@ -108,7 +113,8 @@ const ProductSchema = new Schema({
     },
   },
   category: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
     required: true,
     index: true,
   },
@@ -184,6 +190,14 @@ ProductSchema.virtual('discountPercentage').get(function () {
 ProductSchema.virtual('inStock').get(function () {
   if (!this.trackQuantity) return true;
   return this.quantity > 0;
+});
+
+// Virtual for main image
+ProductSchema.virtual('mainImage').get(function () {
+  if (this.images && this.images.length > 0) {
+    return this.images.find(img => img.position === 0) || this.images[0];
+  }
+  return null;
 });
 
 // Pre-save middleware to update SEO fields if not provided
