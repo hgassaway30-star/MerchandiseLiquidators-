@@ -1,6 +1,6 @@
-import connectDB from '../../../lib/mongodb';
-import User from '../../../models/User';
-import { generateTokenPair, storeRefreshToken } from '../../../lib/auth';
+import connectDB from '../../../lib/mongodb.js';
+import User from '../../../models/User.js';
+import { generateTokenPair, storeRefreshToken } from '../../../lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

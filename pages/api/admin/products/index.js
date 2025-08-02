@@ -1,8 +1,8 @@
-import connectDB from '../../../../lib/mongodb';
-import Product from '../../../../models/Product';
-import Category from '../../../../models/Category';
-import { authenticateRequest, requireAdminAccess } from '../../../../lib/auth';
-import { uploadMultipleImages, deleteMultipleImages } from '../../../../lib/cloudinary';
+import connectDB from '../../../../lib/mongodb.js';
+import Product from '../../../../models/Product.js';
+import Category from '../../../../models/Category.js';
+import { authenticateRequest, requireAdminAccess } from '../../../../lib/auth.js';
+import { uploadMultipleImages, deleteMultipleImages } from '../../../../lib/cloudinary.js';
 import multer from 'multer';
 import { promisify } from 'util';
 

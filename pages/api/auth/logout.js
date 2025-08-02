@@ -1,4 +1,4 @@
-import { verifyAccessToken, removeRefreshToken } from '../../../lib/auth';
+import { verifyAccessToken, removeRefreshToken } from '../../../lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
