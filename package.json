@@ -1,7 +1,7 @@
 {
   "name": "ecommerce-platform",
   "version": "1.0.0",
-  "description": "Full-stack e-commerce platform with MongoDB, Redis, Stripe, and JWT authentication",
+  "description": "Full-stack e-commerce platform with MongoDB, Upstash Redis, Stripe, and JWT authentication",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,7 +13,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "mongoose": "^8.0.3",
-    "redis": "^4.6.12",
+    "@upstash/redis": "^1.25.1",
     "stripe": "^14.10.0",
     "jsonwebtoken": "^9.0.2",
     "bcryptjs": "^2.4.3",
